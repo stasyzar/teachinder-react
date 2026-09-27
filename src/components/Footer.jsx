@@ -1,8 +1,10 @@
 import Navbar from "./Navbar";
 
-function Footer(){
-    return(
-        <Navbar />
+function Footer() {
+    return (
+        <footer>
+            <Navbar />
+        </footer>
     );
 }
 

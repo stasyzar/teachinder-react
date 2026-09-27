@@ -6,8 +6,9 @@ function TopTeachers() {
     return (
         <section id="teachers">
             <hr className="divider"></hr>
+            <h2 className="section-title">Top Teachers</h2>
             <Filters />
-            <div className="teachers-grid">
+            <div className="teacher-grid">
                 {
                     teachersData.map(teacher => (
                         <TeacherCard
