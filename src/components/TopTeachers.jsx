@@ -2,7 +2,7 @@ import Filters from "./Filters";
 import TeacherCard from "./TeacherCard";
 import { teachersData } from "../data/teachers";
 
-function TopTeachers() {
+function TopTeachers({ onSelectTeacher }) {
     return (
         <section id="teachers">
             <hr className="divider"></hr>
@@ -14,6 +14,7 @@ function TopTeachers() {
                         <TeacherCard
                             key={teacher.id}
                             teacher={teacher}
+                            onSelect={() => onSelectTeacher(teacher)}
                         />
                     ))
                 }

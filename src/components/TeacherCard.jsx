@@ -1,8 +1,8 @@
-function TeacherCard({ teacher, showStar = true, showSpeciality = true }) {
+function TeacherCard({ teacher, showStar = true, showSpeciality = true, onSelect }) {
     const { firstName, lastName, speciality, country, avatar, initials, isFavorite } = teacher;
 
     return (
-        <div className="teacher-card">
+        <div className="teacher-card" onClick={onSelect}>
             <div className="avatar-wrap">
                 <div className="avatar-circle">
                     {avatar ? (

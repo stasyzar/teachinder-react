@@ -1,9 +1,9 @@
 import Navbar from "./Navbar";
 
-function Footer() {
+function Footer({ onOpenAddTeacher }) {
     return (
         <footer>
-            <Navbar />
+            <Navbar onOpenAddTeacher={onOpenAddTeacher} />
         </footer>
     );
 }
