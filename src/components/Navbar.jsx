@@ -11,7 +11,6 @@ function Navbar() {
                 <a href="#" className="red-button ">Add teacher</a>
 
             </div>
-            <hr className="divider"></hr>
         </>
     );
 }
