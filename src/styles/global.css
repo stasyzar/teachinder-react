@@ -1,0 +1,614 @@
+@import url('./fonts.css');
+@import url('./reset.css');
+
+
+:root {
+    --primary-color: #f75c49;
+    --primary-hover: #cc4836;
+    --text-dark: #222222;
+    --text-muted: #888888;
+    --border-color: #e0e0e0;
+    --bg-zebra: #f9f9f9;
+    --font-main: 'Roboto', Arial, sans-serif;
+
+    accent-color: var(--primary-color);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 30px 20px;
+    background-color: #fff;
+}
+
+header,
+.nav-row,
+main,
+footer {
+    max-width: 1050px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    display: flex;
+    margin-bottom: 25px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    margin: 0;
+    font-size: 38px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow:
+        -1.5px -1.5px 0 var(--primary-color),
+        1.5px 1px 0 #000000;
+}
+
+.logo:hover {
+    color: #ffffff;
+    text-shadow:
+        -3px -1.5px 0 var(--primary-color),
+        4px 1px 0 #000000;
+}
+
+.search {
+    display: flex;
+    gap: 10px;
+}
+
+.search input {
+    width: 240px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    font-size: 14px;
+    outline: none;
+}
+
+.search input:hover {
+    width: 300px;
+}
+
+.red-button {
+    padding: 8px 20px;
+    border: 1px solid var(--primary-color);
+    background-color: #fff;
+    color: var(--primary-color);
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a.red-button {
+    font-size: 20px;
+}
+
+.red-button:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+
+}
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 35px;
+}
+
+.nav-row nav {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-row nav a {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.nav-row nav a:hover {
+    color: var(--primary-hover);
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 25px 0;
+    color: var(--text-dark);
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.filters select {
+    padding: 8px 10px;
+    border: 1px solid var(--text-dark);
+    border-radius: 2px;
+    background-color: #fff;
+    font-size: 14px;
+    color: var(--text-dark);
+    outline: none;
+    cursor: pointer;
+}
+
+.filters label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.teacher-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 15px;
+    row-gap: 35px;
+    margin-bottom: 45px;
+}
+
+.teacher-card {
+    text-align: center;
+    cursor: pointer;
+}
+
+.avatar-wrap {
+    position: relative;
+    width: 105px;
+    height: 105px;
+    margin: 0 auto 12px auto;
+}
+
+.avatar-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+    background-color: #ffffff;
+}
+
+.avatar-circle img.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: border-color 0.3s ease;
+}
+
+.avatar-wrap .initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: border-color 0.3s ease;
+}
+
+.avatar-wrap:hover .avatar-circle {
+    border-color: var(--primary-hover);
+}
+
+.avatar-wrap:hover img.avatar,
+.avatar-wrap:hover .initials {
+    transform: scale(1.18);
+}
+
+.star {
+    position: absolute;
+    top: 3px;
+    right: -2px;
+    font-size: 24px;
+    color: #f1c40f;
+    z-index: 2;
+}
+
+.teacher-card h3 {
+    margin: 0 auto 10px auto;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.teacher-card .speciality {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.teacher-card .country {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+hr.divider {
+    border: none;
+    border-top: 1px solid var(--text-dark);
+    margin: 40px auto;
+    width: 450px;
+    max-width: 50%;
+}
+
+/*STATISTICS*/
+
+table {
+    width: 100%;
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+thead th {
+    padding: 12px 14px;
+    font-size: 20px;
+    color: var(--text-dark);
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 1px solid var(--text-dark);
+}
+
+thead th:first-child,
+tbody td:first-child {
+    text-align: left;
+    padding-left: 10px;
+}
+
+tbody td {
+    padding: 12px 14px;
+    text-align: center;
+    color: #333333;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #faf7fa;
+}
+
+thead th:hover {
+    background-color: #faf7fa;
+    border-bottom: 4px solid var(--text-dark);
+}
+
+.pagination {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: #1fa2b8;
+    margin-bottom: 40px;
+}
+
+.pagination span.current {
+    color: var(--text-dark);
+}
+
+.pagination span:hover {
+    color: #000000;
+}
+
+/*FAVOURITES*/
+
+.carousel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    gap: 10px;
+}
+
+.carousel-track {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 15px;
+}
+
+.carousel-arrow {
+    background: none;
+    border: none;
+    font-size: 80px;
+    color: var(--text-muted);
+}
+
+.carousel-arrow:hover {
+    color: #000000;
+}
+
+.about {
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.about p {
+    color: var(--text-dark);
+    font-size: 14px;
+    margin: 0 0 16px 0;
+}
+
+
+/*MODAL ADD TEACHER*/
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal {
+    background-color: #ffffff;
+    width: 100%;
+    height: 100%;
+    max-height: 700px;
+    max-width: 400px;
+    text-align: left;
+}
+
+.modal-header {
+    background-color: #333333;
+    display: flex;
+    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 26px;
+}
+
+.modal-body {
+    padding: 22px 26px 26px 26px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.field label,
+.field span {
+    font-size: 14px;
+    padding-bottom: 4px;
+    color: var(--text-muted);
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="date"],
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #c4c4c4;
+    border-radius: 2px;
+    font-size: 14px;
+    color: var(--text-dark);
+    background-color: #fff;
+    height: 32px;
+}
+
+.field textarea {
+    margin-bottom: 30px;
+    height: 85px;
+}
+
+.field-row {
+    display: flex;
+    gap: 16px;
+}
+
+.field-row .field {
+    flex: 1;
+}
+
+.half-field {
+    width: calc(50% - 8px);
+}
+
+.inline-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+
+.inline-field label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.color-picker-wrap input[type="color"] {
+    width: 38px;
+    height: 26px;
+    padding: 60;
+    border: 1px solid #c4c4c4;
+    background: none;
+}
+
+.modal-submit-btn {
+    width: 100%;
+    padding: 12px;
+    color: var(--primary-color);
+    background-color: #fff;
+    font-size: 20px;
+    border: 1px solid var(--primary-color);
+}
+
+.modal-submit-btn:hover {
+    color: #ffffff;
+    background-color: var(--primary-color);
+}
+
+.field select {
+    border-radius: 2px;
+}
+
+/*MODAL INFO*/
+
+.modal-teacher-info {
+    max-width: 620px;
+    height: auto;
+}
+
+.info-photo {
+    float: left;
+    width: 230px;
+    height: 230px;
+    object-fit: cover;
+    margin-right: 25px;
+    margin-bottom: 15px;
+}
+
+.teacher-info-top::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+.info-meta {
+    position: relative;
+}
+
+.info-star {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 26px;
+    color: #f1c40f;
+}
+
+.info-name {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+
+.info-speciality {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.info-location,
+.info-age-gender,
+.info-email,
+.info-phone {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: var(--text-dark);
+}
+
+.info-email a,
+.toggle-map-link {
+    color: #1fa2b8;
+    text-decoration: underline;
+}
+
+.info-description {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-dark);
+    margin: 15px 0 12px 0;
+}
+
+.toggle-map-link {
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  header,
+  .nav-row {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .nav-row nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .filters {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .filters .sep {
+    display: none;
+  }
+
+  .teacher-grid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 25px;
+  }
+
+  #statistics {
+    overflow-x: auto;
+  }
+
+  .carousel-track {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .carousel-arrow {
+    font-size: 45px;
+  }
+
+  .info-photo {
+    float: none;
+    margin: 0 auto 15px auto;
+    display: block;
+  }
+}
