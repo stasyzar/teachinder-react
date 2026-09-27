@@ -1,7 +1,11 @@
+import Header from "./components/Header"
+import Navbar from "./components/Navbar"
+
 function App() {
   return (
     <div className="page">
-      <h1 className="logo">Teachinder</h1>
+      <Header/>
+      <Navbar />
     </div>
   )
 }
