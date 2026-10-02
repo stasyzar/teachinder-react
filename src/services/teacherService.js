@@ -159,3 +159,32 @@ export function filterTeachers(teachers, filters = {}) {
     return true;
   });
 }
+
+export function sortTeachers(teachers, sortBy = "full_name", order = "asc") {
+  if (!Array.isArray(teachers)) return [];
+
+  const copy = [...teachers];
+
+  return copy.sort((a, b) => {
+   let valA = a[sortBy];
+   let valB = b[sortBy];
+
+   if (sortBy === "b_date") {
+      valA = new Date(a.b_date || 0).getTime();
+      valB = new Date(b.b_date || 0).getTime();
+    }
+
+   if(!valA) return 1;
+   if(!valB) return -1;
+
+   let res = 0;
+
+   if (typeof valA === "number" && typeof valB === "number") {
+      res = valA - valB;
+    } else {
+      res = String(valA).localeCompare(String(valB));
+    }
+
+    return order ==="desc" ? -res : res;
+  });
+}
