@@ -7,92 +7,136 @@ import {
   getTeacherPercentage,
 } from "./src/services/teacherService.js";
 
-console.log("========================================");
-console.log("TASK 1: Format & Deduplicate Teachers");
-console.log("========================================");
+const LIMIT = 10;
+
 const teachers = formatTeachers();
+
+console.log("================================================================================");
+console.log("TASK 1: FORMAT & DEDUPLICATE TEACHERS");
+console.log("================================================================================");
 console.log("Total normalized teachers:", teachers.length);
-console.log("Sample teacher:", {
-  id: teachers[0].id,
-  full_name: teachers[0].full_name,
-  gender: teachers[0].gender,
-  course: teachers[0].course,
-  age: teachers[0].age,
-  country: teachers[0].country,
-  phone: teachers[0].phone,
-});
+console.log("First " + LIMIT + " teachers:");
+console.table(
+  teachers.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    Gender: t.gender,
+    Age: t.age,
+    Country: t.country,
+    Course: t.course,
+    Phone: t.phone,
+  }))
+);
 
 console.log("");
-console.log("========================================");
-console.log("TASK 2: Validate Teachers");
-console.log("========================================");
+console.log("================================================================================");
+console.log("TASK 2: VALIDATE TEACHERS");
+console.log("================================================================================");
 const validTeachers = teachers.filter(validateTeacher);
+const invalidTeachers = teachers.filter((t) => !validateTeacher(t));
 console.log("Valid teachers:", validTeachers.length + " / " + teachers.length);
+console.log("Invalid teachers count:", invalidTeachers.length);
+console.log("Sample invalid teachers (failed phone format or missing fields):");
+console.table(
+  invalidTeachers.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    Country: t.country,
+    Phone: t.phone,
+    Valid: validateTeacher(t),
+  }))
+);
 console.log("Validate first teacher:", validateTeacher(teachers[0]));
-console.log("Validate invalid teacher (negative age):", validateTeacher({ ...teachers[0], age: -5 }));
-console.log("Validate invalid teacher (invalid email):", validateTeacher({ ...teachers[0], email: "invalid-email" }));
+console.log("Validate fake teacher (age = -5):", validateTeacher({ ...teachers[0], age: -5 }));
+console.log("Validate fake teacher (invalid email):", validateTeacher({ ...teachers[0], email: "not-an-email" }));
 
 console.log("");
-console.log("========================================");
-console.log("TASK 3: Filter Teachers");
-console.log("========================================");
+console.log("================================================================================");
+console.log("TASK 3: FILTER TEACHERS (LOGICAL AND)");
+console.log("================================================================================");
 const germanyTeachers = filterTeachers(teachers, { country: "Germany" });
-console.log("Filter { country: 'Germany' } count:", germanyTeachers.length);
-console.log("Names:", germanyTeachers.map((t) => t.full_name));
+console.log("Filter: { country: 'Germany' } -> found " + germanyTeachers.length);
+console.table(
+  germanyTeachers.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    Gender: t.gender,
+    Age: t.age,
+    Country: t.country,
+    Course: t.course,
+  }))
+);
 
 const femaleTeachers = filterTeachers(teachers, { gender: "Female" });
-console.log("Filter { gender: 'Female' } count:", femaleTeachers.length);
-
-const favoriteTeachers = filterTeachers(teachers, { favorite: true });
-console.log("Filter { favorite: true } count:", favoriteTeachers.length);
+console.log("Filter: { gender: 'Female' } -> found " + femaleTeachers.length + " (showing first " + LIMIT + ")");
+console.table(
+  femaleTeachers.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    Gender: t.gender,
+    Age: t.age,
+    Country: t.country,
+  }))
+);
 
 console.log("");
-console.log("========================================");
-console.log("TASK 4: Sort Teachers");
-console.log("========================================");
+console.log("================================================================================");
+console.log("TASK 4: SORT TEACHERS");
+console.log("================================================================================");
 const sortedByName = sortTeachers(teachers, "full_name", "asc");
-console.log("Sorted by full_name (asc, top 3):", sortedByName.slice(0, 3).map((t) => t.full_name));
+console.log("Sort: full_name (asc, first " + LIMIT + "):");
+console.table(
+  sortedByName.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    Age: t.age,
+    Country: t.country,
+  }))
+);
 
 const sortedByAgeDesc = sortTeachers(teachers, "age", "desc");
-console.log(
-  "Sorted by age (desc, top 3):",
-  sortedByAgeDesc.slice(0, 3).map((t) => t.full_name + " (" + t.age + ")")
+console.log("Sort: age (desc, first " + LIMIT + "):");
+console.table(
+  sortedByAgeDesc.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    Age: t.age,
+    Country: t.country,
+  }))
 );
 
 const sortedByDate = sortTeachers(teachers, "b_date", "asc");
-console.log(
-  "Sorted by b_date (asc, top 3):",
-  sortedByDate.slice(0, 3).map((t) => t.full_name + " (" + (t.b_date ? t.b_date.slice(0, 10) : "") + ")")
+console.log("Sort: b_date (asc, first " + LIMIT + "):");
+console.table(
+  sortedByDate.slice(0, LIMIT).map((t) => ({
+    Name: t.full_name,
+    BirthDate: t.b_date ? t.b_date.slice(0, 10) : null,
+    Age: t.age,
+  }))
 );
 
 console.log("");
-console.log("========================================");
-console.log("TASK 5: Find Teacher");
-console.log("========================================");
-const foundByName = findTeacher(teachers, "Norbert");
-console.log("Search 'Norbert':", foundByName ? foundByName.full_name + ", age " + foundByName.age : null);
-
-const foundByAge = findTeacher(teachers, 65);
-console.log("Search 65 (number):", foundByAge ? foundByAge.full_name + ", age " + foundByAge.age : null);
-
-const foundByAgeStr = findTeacher(teachers, "65");
-console.log("Search '65' (string):", foundByAgeStr ? foundByAgeStr.full_name + ", age " + foundByAgeStr.age : null);
-
-const notFound = findTeacher(teachers, "NonExistentUser123");
-console.log("Search 'NonExistentUser123':", notFound);
+console.log("================================================================================");
+console.log("TASK 5: FIND TEACHER");
+console.log("================================================================================");
+const searchTests = [
+  { label: "Search by name 'Norbert'", result: findTeacher(teachers, "Norbert") },
+  { label: "Search by age number 65", result: findTeacher(teachers, 65) },
+  { label: "Search by age string '65'", result: findTeacher(teachers, "65") },
+  { label: "Search non-existent", result: findTeacher(teachers, "NonExistentUser123") },
+];
+console.table(
+  searchTests.map((st) => ({
+    Test: st.label,
+    FoundName: st.result ? st.result.full_name : "null",
+    FoundAge: st.result ? st.result.age : "null",
+    FoundCountry: st.result ? st.result.country : "null",
+  }))
+);
 
 console.log("");
-console.log("========================================");
-console.log("TASK 6: Teacher Percentage");
-console.log("========================================");
-const percentAgeOver30 = getTeacherPercentage(teachers, (t) => t.age > 30);
-console.log("Percentage age > 30:", percentAgeOver30 + "%");
-
-const percentNorbert = getTeacherPercentage(teachers, "Norbert");
-console.log("Percentage query 'Norbert':", percentNorbert + "%");
-
-const percentAge65 = getTeacherPercentage(teachers, 65);
-console.log("Percentage query 65:", percentAge65 + "%");
-
-console.log("Percentage without condition:", getTeacherPercentage(teachers) + "%");
-console.log("========================================");
+console.log("================================================================================");
+console.log("TASK 6: PERCENTAGE OF TEACHERS");
+console.log("================================================================================");
+const percentageTests = [
+  { Condition: "Age > 30", Percentage: getTeacherPercentage(teachers, (t) => t.age > 30) + "%" },
+  { Condition: "Query: 'Norbert'", Percentage: getTeacherPercentage(teachers, "Norbert") + "%" },
+  { Condition: "Query: 65", Percentage: getTeacherPercentage(teachers, 65) + "%" },
+  { Condition: "No condition", Percentage: getTeacherPercentage(teachers) + "%" },
+];
+console.table(percentageTests);
+console.log("================================================================================");
