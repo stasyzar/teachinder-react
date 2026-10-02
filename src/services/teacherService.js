@@ -135,3 +135,27 @@ export function validateTeacher(teacher) {
 
   return true;
 }
+
+export function filterTeachers(teachers, filters = {}) {
+  if (!Array.isArray(teachers)) return [];
+
+  return teachers.filter((teacher) => {
+    if (filters.country && teacher.country?.toLowerCase() !== filters.country.toLowerCase()) {
+      return false;
+    }
+
+    if (filters.gender && teacher.gender?.toLowerCase() !== filters.gender.toLowerCase()) {
+      return false;
+    }
+
+    if (filters.age !== undefined && filters.age !== null && teacher.age !== filters.age) {
+      return false;
+    }
+
+    if (filters.favorite !== undefined && filters.favorite !== null && teacher.favorite !== filters.favorite) {
+      return false;
+    }
+
+    return true;
+  });
+}
