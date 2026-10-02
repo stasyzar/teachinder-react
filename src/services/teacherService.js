@@ -188,3 +188,17 @@ export function sortTeachers(teachers, sortBy = "full_name", order = "asc") {
     return order ==="desc" ? -res : res;
   });
 }
+
+export function findTeacher(teachers, query) {
+  if (!teachers || !query || teachers.length === 0) {
+    return null;
+  }
+
+  const q = String(query).toLowerCase();
+
+  return teachers.find((teacher) => 
+    teacher.full_name?.toLowerCase().includes(q) ||
+    teacher.note?.toLowerCase().includes(q) ||
+    teacher.age == q
+  ) || null;
+}
