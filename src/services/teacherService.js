@@ -75,3 +75,63 @@ export function formatTeachers(primUsers = randomUserMock, secUsers = additional
 
   return Array.from(map.values());
 }
+
+const phoneFormats = {
+  Germany: /^\d{4}-\d{7}$/,
+  Ireland: /^\d{3}-\d{3}-\d{4}$/,
+  Australia: /^\d{2}-\d{4}-\d{4}$/,
+  "United States": /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Finland: /^\d{2}-\d{3}-\d{3}$/,
+  Turkey: /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Switzerland: /^\d{3}\s\d{3}\s\d{2}\s\d{2}$/,
+  "New Zealand": /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Spain: /^\d{3}-\d{3}-\d{3}$/,
+  Norway: /^\d{8}$/,
+  Denmark: /^\d{8}$/,
+  Iran: /^\d{3}-\d{8}$/,
+  Canada: /^\d{3}-\d{3}-\d{4}$/,
+  France: /^\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/,
+  Netherlands: /^\(\d{3}\)-\d{3}-\d{4}$/,
+};
+
+function isCapitalized(value) {
+  if (typeof value !== "string" || value.length === 0) return false;
+  const first = value.charAt(0);
+  return first === first.toUpperCase() && first !== first.toLowerCase();
+}
+
+export function validateTeacher(teacher) {
+  if (!teacher || typeof teacher !== "object") return false;
+
+  const stringFields = ["full_name", "gender", "state", "city", "country"];
+  for (const field of stringFields) {
+    if (!isCapitalized(teacher[field])) {
+      return false;
+    }
+  }
+
+  if (teacher.note !== null && teacher.note !== undefined) {
+    if (!isCapitalized(teacher.note)) {
+      return false;
+    }
+  }
+
+  if (typeof teacher.age !== "number" || isNaN(teacher.age) || teacher.age <= 0) {
+    return false;
+  }
+
+  if (typeof teacher.email !== "string" || !teacher.email.includes("@")) {
+    return false;
+  }
+
+  if (typeof teacher.phone !== "string") {
+    return false;
+  }
+
+  const format = phoneFormats[teacher.country];
+  if (format && !format.test(teacher.phone)) {
+    return false;
+  }
+
+  return true;
+}
