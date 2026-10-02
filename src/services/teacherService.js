@@ -96,8 +96,7 @@ const phoneFormats = {
 
 function isCapitalized(value) {
   if (typeof value !== "string" || value.length === 0) return false;
-  const first = value.charAt(0);
-  return first === first.toUpperCase() && first !== first.toLowerCase();
+  return /^[\p{Lu}\p{Lo}]/u.test(value);
 }
 
 export function validateTeacher(teacher) {
