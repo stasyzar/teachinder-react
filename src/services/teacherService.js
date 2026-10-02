@@ -202,3 +202,21 @@ export function findTeacher(teachers, query) {
     teacher.age == q
   ) || null;
 }
+
+export function getTeacherPercentage(teachers, condition) {
+  if (!teachers || teachers.length === 0 || !condition) return 0;
+
+  const matched = teachers.filter((teacher) => {
+    if (typeof condition === "function") {
+      return condition(teacher);
+    }
+    const q = String(condition).toLowerCase();
+    return (
+      teacher.full_name?.toLowerCase()?.includes(q) ||
+      teacher.note?.toLowerCase()?.includes(q) ||
+      teacher.age == condition
+    );
+  });
+
+  return Math.round((matched.length / teachers.length) * 100);
+}
