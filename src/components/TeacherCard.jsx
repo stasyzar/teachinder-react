@@ -1,5 +1,11 @@
 function TeacherCard({ teacher, showStar = true, showSpeciality = true, onSelect }) {
-    const { firstName, lastName, speciality, country, avatar, initials, isFavorite } = teacher;
+    const { full_name, course, country, picture_large, picture_thumbnail, favorite } = teacher;
+
+    const nameParts = full_name ? full_name.split(" ") : ["", ""];
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts[1] || "";
+    const initials = firstName && lastName ? `${firstName[0]}.${lastName[0]}` : "";
+    const avatar = picture_large || picture_thumbnail;
 
     return (
         <div className="teacher-card" onClick={onSelect}>
@@ -11,14 +17,14 @@ function TeacherCard({ teacher, showStar = true, showSpeciality = true, onSelect
                         <div className="initials">{initials}</div>
                     )}
                 </div>
-                {showStar && isFavorite && <span className="star">★</span>}
+                {showStar && favorite && <span className="star">★</span>}
             </div>
             <h3>
                 {firstName}
                 <br />
                 {lastName}
             </h3>
-            {showSpeciality && speciality && <div className="speciality">{speciality}</div>}
+            {showSpeciality && course && <div className="speciality">{course}</div>}
             <div className="country">{country}</div>
         </div>
     );

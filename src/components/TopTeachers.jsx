@@ -1,8 +1,7 @@
 import Filters from "./Filters";
 import TeacherCard from "./TeacherCard";
-import { teachersData } from "../data/teachers";
 
-function TopTeachers({ onSelectTeacher }) {
+function TopTeachers({ onSelectTeacher, teachers = [] }) {
     return (
         <section id="teachers">
             <hr className="divider"></hr>
@@ -10,7 +9,7 @@ function TopTeachers({ onSelectTeacher }) {
             <Filters />
             <div className="teacher-grid">
                 {
-                    teachersData.map(teacher => (
+                    teachers.map(teacher => (
                         <TeacherCard
                             key={teacher.id}
                             teacher={teacher}
