@@ -8,7 +8,7 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import AddTeacherModal from "./components/AddTeacherModal";
 import TeacherInfoModal from "./components/TeacherInfoModal";
-import {validateTeacher, formatTeachers} from "./services/teacherService.js";
+import { validateTeacher, formatTeachers } from "./services/teacherService.js";
 import { randomUserMock, additionalUsers } from "./data/FE4U-Lab2-mock.js";
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
       <Header />
       <Navbar onOpenAddTeacher={() => setIsAddModalOpen(true)} />
       <main>
-        <TopTeachers onSelectTeacher={setSelectedTeacher} teachers={teachers} />
+        <TopTeachers onSelectTeacher={setSelectedTeacher} teachers={teachers}/>
         <StatisticsTable />
         <FavoritesCarousel teachers={teachers} />
         <About />

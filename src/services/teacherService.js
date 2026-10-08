@@ -139,19 +139,31 @@ export function filterTeachers(teachers, filters = {}) {
   if (!Array.isArray(teachers)) return [];
 
   return teachers.filter((teacher) => {
-    if (filters.country && teacher.country?.toLowerCase() !== filters.country.toLowerCase()) {
+    if (filters.country && filters.country !== "All" && teacher.country?.toLowerCase() !== filters.country.toLowerCase()) {
       return false;
     }
 
-    if (filters.gender && teacher.gender?.toLowerCase() !== filters.gender.toLowerCase()) {
+   if (filters.gender && filters.gender !== "All" && teacher.gender?.toLowerCase() !== filters.gender.toLowerCase()) {
       return false;
     }
 
-    if (filters.age !== undefined && filters.age !== null && teacher.age !== filters.age) {
+    if (filters.age !== undefined && filters.age !== null && filters.age !== "All") {
+      if (typeof filters.age === "number") {
+        if (teacher.age !== filters.age) return false;
+      } else if (filters.age === "18-31") {
+        if (teacher.age < 18 || teacher.age > 31) return false;
+      } else if (filters.age === "32-45") {
+        if (teacher.age < 32 || teacher.age > 45) return false;
+      } else if (filters.age === "46+") {
+        if (teacher.age < 46) return false;
+      }
+    }
+
+    if (filters.favorite && !teacher.favorite) {
       return false;
     }
 
-    if (filters.favorite !== undefined && filters.favorite !== null && teacher.favorite !== filters.favorite) {
+    if (filters.hasPhoto && !teacher.picture_large) {
       return false;
     }
 
