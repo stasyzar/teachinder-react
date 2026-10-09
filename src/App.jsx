@@ -8,7 +8,7 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import AddTeacherModal from "./components/AddTeacherModal";
 import TeacherInfoModal from "./components/TeacherInfoModal";
-import { validateTeacher, formatTeachers } from "./services/teacherService.js";
+import { validateTeacher, formatTeachers, findTeacher } from "./services/teacherService.js";
 import { randomUserMock, additionalUsers } from "./data/FE4U-Lab2-mock.js";
 
 function App() {
@@ -29,13 +29,24 @@ function App() {
     );
   };
 
+  const handleSearch = (query) => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    const found = findTeacher(teachers, trimmed);
+    if (found) {
+      setSelectedTeacher(found);
+    } else {
+      alert("Teacher not found!");
+    }
+  };
+
   return (
     <div className="page">
-      <Header />
+      <Header onSearch={handleSearch} />
       <Navbar onOpenAddTeacher={() => setIsAddModalOpen(true)} />
       <main>
         <TopTeachers onSelectTeacher={setSelectedTeacher} teachers={teachers} />
-        <StatisticsTable teachers={teachers}/>
+        <StatisticsTable teachers={teachers} />
         <FavoritesCarousel
           teachers={teachers}
           onSelectTeacher={setSelectedTeacher}
