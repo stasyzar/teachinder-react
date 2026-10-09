@@ -40,6 +40,10 @@ function App() {
     }
   };
 
+  const handleAddTeacher = (newTeacher) => {
+    setTeachers((prevTeachers) => [newTeacher, ...prevTeachers]);
+  };
+
   return (
     <div className="page">
       <Header onSearch={handleSearch} />
@@ -58,6 +62,7 @@ function App() {
       <AddTeacherModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onAddTeacher={handleAddTeacher}
       />
 
       <TeacherInfoModal
