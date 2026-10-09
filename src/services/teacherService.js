@@ -62,7 +62,7 @@ function normalizeUser(user, index){
 
 export function formatTeachers(primUsers = randomUserMock, secUsers = additionalUsers) {
   const map  = new Map();
-  const allUsers = [...primUsers, ...secUsers];
+  const allUsers = [...secUsers, ...primUsers];
 
   allUsers.forEach((user, index) => {
     const normalized = normalizeUser(user,index);
@@ -70,6 +70,13 @@ export function formatTeachers(primUsers = randomUserMock, secUsers = additional
 
     if(!map.has(key)){
       map.set(key, normalized);
+    } else {
+      const existing = map.get(key);
+      for (const prop in normalized) {
+        if (!existing[prop] && normalized[prop]) {
+          existing[prop] = normalized[prop];
+        }
+      }
     }
   });
 
