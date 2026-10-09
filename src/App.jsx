@@ -18,14 +18,28 @@ function App() {
     return formatTeachers(randomUserMock, additionalUsers).filter((teacher) => validateTeacher(teacher));
   });
 
+  const handleToggleFavorite = (teacherId) => {
+    setTeachers((prevTeachers) =>
+      prevTeachers.map((t) =>
+        t.id === teacherId ? { ...t, favorite: !t.favorite } : t
+      )
+    );
+    setSelectedTeacher((prev) =>
+      prev && prev.id === teacherId ? { ...prev, favorite: !prev.favorite } : prev
+    );
+  };
+
   return (
     <div className="page">
       <Header />
       <Navbar onOpenAddTeacher={() => setIsAddModalOpen(true)} />
       <main>
-        <TopTeachers onSelectTeacher={setSelectedTeacher} teachers={teachers}/>
-        <StatisticsTable />
-        <FavoritesCarousel teachers={teachers} />
+        <TopTeachers onSelectTeacher={setSelectedTeacher} teachers={teachers} />
+        <StatisticsTable teachers={teachers}/>
+        <FavoritesCarousel
+          teachers={teachers}
+          onSelectTeacher={setSelectedTeacher}
+        />
         <About />
       </main>
       <Footer onOpenAddTeacher={() => setIsAddModalOpen(true)} />
@@ -38,6 +52,7 @@ function App() {
       <TeacherInfoModal
         teacher={selectedTeacher}
         onClose={() => setSelectedTeacher(null)}
+        onToggleFavorite={handleToggleFavorite}
       />
     </div>
   )

@@ -1,7 +1,8 @@
-function TeacherInfoModal({ teacher, onClose }) {
+function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
   if (!teacher) return null;
 
   const {
+    id,
     full_name,
     course,
     country,
@@ -26,8 +27,8 @@ function TeacherInfoModal({ teacher, onClose }) {
   const lat = coordinates?.latitude;
   const lng = coordinates?.longitude;
   const mapUrl = (lat && lng)
-  ? `https://www.google.com/maps?q=${lat},${lng}`
-  : `https://www.google.com/maps?q=${encodeURIComponent(`${city || ""}, ${country}`)}`;
+    ? `https://www.google.com/maps?q=${lat},${lng}`
+    : `https://www.google.com/maps?q=${encodeURIComponent(`${city || ""}, ${country}`)}`;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -48,7 +49,13 @@ function TeacherInfoModal({ teacher, onClose }) {
             )}
 
             <div className="info-meta">
-              <span className="info-star">{favorite ? "★" : "☆"}</span>
+              <span
+                className="info-star"
+                onClick={() => onToggleFavorite(id)}
+                style={{ cursor: "pointer" }}
+              >
+                {favorite ? "★" : "☆"}
+              </span>
               <h2 className="info-name">{`${firstName} ${lastName}`}</h2>
               <h4 className="info-speciality">{course}</h4>
               <p className="info-location">{city ? `${city}, ` : ""}{country}</p>

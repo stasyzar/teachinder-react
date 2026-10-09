@@ -33,7 +33,7 @@ function TopTeachers({ onSelectTeacher, teachers = [] }) {
             />
             <div className="teacher-grid">
                 {
-                    filteredTeachers.map(teacher => (
+                    filteredTeachers.slice(0, 15).map(teacher => (
                         <TeacherCard
                             key={teacher.id}
                             teacher={teacher}
