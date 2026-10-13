@@ -1,4 +1,4 @@
-function TeacherCard({ teacher, showStar = true, showSpeciality = true, onSelect }) {
+function TeacherCard({ teacher, showStar = true, showSpeciality = true }) {
     const { full_name, course, country, picture_large, picture_thumbnail, favorite } = teacher;
 
     const nameParts = full_name ? full_name.split(" ") : ["", ""];
@@ -8,7 +8,7 @@ function TeacherCard({ teacher, showStar = true, showSpeciality = true, onSelect
     const avatar = picture_large || picture_thumbnail;
 
     return (
-        <div className="teacher-card" onClick={onSelect}>
+        <div className="teacher-card" data-id={id}>
             <div className="avatar-wrap">
                 <div className="avatar-circle">
                     {avatar ? (
