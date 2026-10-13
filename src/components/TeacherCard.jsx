@@ -1,5 +1,5 @@
 function TeacherCard({ teacher, showStar = true, showSpeciality = true }) {
-    const { full_name, course, country, picture_large, picture_thumbnail, favorite } = teacher;
+    const { id, full_name, course, country, picture_large, picture_thumbnail, favorite } = teacher;
 
     const nameParts = full_name ? full_name.split(" ") : ["", ""];
     const firstName = nameParts[0] || "";
