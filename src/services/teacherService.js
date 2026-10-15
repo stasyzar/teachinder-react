@@ -62,7 +62,7 @@ function normalizeUser(user, index){
 
 export function formatTeachers(primUsers = randomUserMock, secUsers = additionalUsers) {
   const map  = new Map();
-  const allUsers = [...primUsers, ...secUsers];
+  const allUsers = [...secUsers, ...primUsers];
 
   allUsers.forEach((user, index) => {
     const normalized = normalizeUser(user,index);
@@ -70,6 +70,13 @@ export function formatTeachers(primUsers = randomUserMock, secUsers = additional
 
     if(!map.has(key)){
       map.set(key, normalized);
+    } else {
+      const existing = map.get(key);
+      for (const prop in normalized) {
+        if (!existing[prop] && normalized[prop]) {
+          existing[prop] = normalized[prop];
+        }
+      }
     }
   });
 
@@ -92,6 +99,21 @@ const phoneFormats = {
   Canada: /^\d{3}-\d{3}-\d{4}$/,
   France: /^\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/,
   Netherlands: /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Ukraine: /^\d{3}-\d{3}-\d{2}-\d{2}$/,
+  "United Kingdom": /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Brazil: /^\(\d{2}\)\s\d{4}-\d{4}$/,
+  Italy: /^\d{3}-\d{3}-\d{4}$/,
+  Mexico: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Sweden: /^\d{3}-\d{2}-\d{2}$/,
+  Belgium: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Austria: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Poland: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Portugal: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Greece: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Japan: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  China: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  India: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  SouthKorea: /^\(\d{3}\)\s\d{3}-\d{4}$/,
 };
 
 function isCapitalized(value) {
@@ -139,19 +161,31 @@ export function filterTeachers(teachers, filters = {}) {
   if (!Array.isArray(teachers)) return [];
 
   return teachers.filter((teacher) => {
-    if (filters.country && teacher.country?.toLowerCase() !== filters.country.toLowerCase()) {
+    if (filters.country && filters.country !== "All" && teacher.country?.toLowerCase() !== filters.country.toLowerCase()) {
       return false;
     }
 
-    if (filters.gender && teacher.gender?.toLowerCase() !== filters.gender.toLowerCase()) {
+   if (filters.gender && filters.gender !== "All" && teacher.gender?.toLowerCase() !== filters.gender.toLowerCase()) {
       return false;
     }
 
-    if (filters.age !== undefined && filters.age !== null && teacher.age !== filters.age) {
+    if (filters.age !== undefined && filters.age !== null && filters.age !== "All") {
+      if (typeof filters.age === "number") {
+        if (teacher.age !== filters.age) return false;
+      } else if (filters.age === "18-31") {
+        if (teacher.age < 18 || teacher.age > 31) return false;
+      } else if (filters.age === "32-45") {
+        if (teacher.age < 32 || teacher.age > 45) return false;
+      } else if (filters.age === "46+") {
+        if (teacher.age < 46) return false;
+      }
+    }
+
+    if (filters.favorite && !teacher.favorite) {
       return false;
     }
 
-    if (filters.favorite !== undefined && filters.favorite !== null && teacher.favorite !== filters.favorite) {
+    if (filters.hasPhoto && !teacher.picture_large) {
       return false;
     }
 
