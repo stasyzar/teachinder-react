@@ -56,7 +56,32 @@ function App() {
   };
 
   const handleAddTeacher = (newTeacher) => {
-    setTeachers((prevTeachers) => [newTeacher, ...prevTeachers]);
+    if (!validateTeacher(newTeacher)) {
+    alert("Помилка валідації! Перевірте правильність заповнення форми (ім'я з великої літери, коректний телефон та вік).");
+    return false;
+  }
+fetch("http://localhost:3001/teachers", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newTeacher),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+      }
+      return response.json();
+    })
+    .then((savedTeacher) => {
+      setTeachers((prevTeachers) => [savedTeacher, ...prevTeachers]);
+      alert("Викладача успішно додано та збережено на сервері!");
+    })
+    .catch((error) => {
+      console.error("Помилка збереження на json-server:", error);
+      setTeachers((prevTeachers) => [newTeacher, ...prevTeachers]);
+    });
+    return true;
   };
 
   const handleFilterChange = (field, value) => {

@@ -99,6 +99,21 @@ const phoneFormats = {
   Canada: /^\d{3}-\d{3}-\d{4}$/,
   France: /^\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/,
   Netherlands: /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Ukraine: /^\d{3}-\d{3}-\d{2}-\d{2}$/,
+  "United Kingdom": /^\(\d{3}\)-\d{3}-\d{4}$/,
+  Brazil: /^\(\d{2}\)\s\d{4}-\d{4}$/,
+  Italy: /^\d{3}-\d{3}-\d{4}$/,
+  Mexico: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Sweden: /^\d{3}-\d{2}-\d{2}$/,
+  Belgium: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Austria: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Poland: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Portugal: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Greece: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  Japan: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  China: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  India: /^\(\d{3}\)\s\d{3}-\d{4}$/,
+  SouthKorea: /^\(\d{3}\)\s\d{3}-\d{4}$/,
 };
 
 function isCapitalized(value) {
