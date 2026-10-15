@@ -1,26 +1,8 @@
 import Filters from "./Filters";
 import { useState } from "react";
 import TeacherCard from "./TeacherCard";
-import { filterTeachers } from "../services/teacherService.js";
 
-function TopTeachers({ onSelectTeacher, teachers = [] }) {
-
-    const [filters, setFilters] = useState({
-        age: "All",
-        country: "All",
-        gender: "All",
-        hasPhoto: false,
-        favorite: false,
-    });
-
-    const handleFilterChange = (field, value) => {
-        setFilters((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
-
-    const filteredTeachers = filterTeachers(teachers, filters);
+function TopTeachers({ onSelectTeacher, filters, onFilterChange, teachers = [], filteredTeachers }) {
 
     const handleGridClick = (e) => {
         const card = e.target.closest(".teacher-card");
@@ -39,7 +21,7 @@ function TopTeachers({ onSelectTeacher, teachers = [] }) {
             <Filters
                 teachers={teachers}
                 filters={filters}
-                onFilterChange={handleFilterChange}
+                onFilterChange={onFilterChange}
             />
             <div className="teacher-grid" onClick={handleGridClick}>
                 {

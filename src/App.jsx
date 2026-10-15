@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
 import TopTeachers from "./components/TopTeachers";
@@ -8,15 +8,29 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import AddTeacherModal from "./components/AddTeacherModal";
 import TeacherInfoModal from "./components/TeacherInfoModal";
-import { validateTeacher, formatTeachers, findTeacher } from "./services/teacherService.js";
-import { randomUserMock, additionalUsers } from "./data/FE4U-Lab2-mock.js";
+import { validateTeacher, formatTeachers, findTeacher ,filterTeachers} from "./services/teacherService.js";
 
 function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
-  const [teachers, setTeachers] = useState(() => {
-    return formatTeachers(randomUserMock, additionalUsers).filter((teacher) => validateTeacher(teacher));
+  const [teachers, setTeachers] = useState([]);
+  const [filters, setFilters] = useState({
+    age: "All",
+    country: "All",
+    gender: "All",
+    hasPhoto: false,
+    favorite: false,
   });
+
+  useEffect(() => {
+    fetch("https://randomuser.me/api/?results=50")
+      .then((response) => response.json())
+      .then((data) => {
+        const normalized = formatTeachers(data.results, []).filter(validateTeacher);
+        setTeachers(normalized);
+      })
+      .catch((error) => console.error("Failed to fetch teachers:", error));
+  }, []);
 
   const handleToggleFavorite = (teacherId) => {
     setTeachers((prevTeachers) =>
@@ -44,13 +58,32 @@ function App() {
     setTeachers((prevTeachers) => [newTeacher, ...prevTeachers]);
   };
 
+  const handleFilterChange = (field, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  let filteredTeachers = filterTeachers(teachers, filters);
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    filteredTeachers = filteredTeachers.filter(
+      (t) =>
+        t.full_name?.toLowerCase().includes(q) ||
+        t.note?.toLowerCase().includes(q) ||
+        String(t.age) === q
+    );
+  }
+
   return (
     <div className="page">
       <Header onSearch={handleSearch} />
       <Navbar onOpenAddTeacher={() => setIsAddModalOpen(true)} />
       <main>
-        <TopTeachers onSelectTeacher={setSelectedTeacher} teachers={teachers} />
-        <StatisticsTable teachers={teachers} />
+        <TopTeachers onSelectTeacher={setSelectedTeacher} filters={filters}
+          onFilterChange={handleFilterChange} teachers={teachers} filteredTeachers={filteredTeachers}/>
+        <StatisticsTable teachers={filteredTeachers} />
         <FavoritesCarousel
           teachers={teachers}
           onSelectTeacher={setSelectedTeacher}
