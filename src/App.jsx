@@ -8,12 +8,13 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import AddTeacherModal from "./components/AddTeacherModal";
 import TeacherInfoModal from "./components/TeacherInfoModal";
-import { validateTeacher, formatTeachers, findTeacher ,filterTeachers} from "./services/teacherService.js";
+import { validateTeacher, formatTeachers, findTeacher, filterTeachers } from "./services/teacherService.js";
 
 function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [teachers, setTeachers] = useState([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filters, setFilters] = useState({
     age: "All",
     country: "All",
@@ -23,13 +24,13 @@ function App() {
   });
 
   useEffect(() => {
-    fetch("https://randomuser.me/api/?results=50")
+    fetch("https://randomuser.me/api/?page=1&results=30&seed=teachinder")
       .then((response) => response.json())
       .then((data) => {
-        const normalized = formatTeachers(data.results, []).filter(validateTeacher);
+        const normalized = formatTeachers(data.results, []);
         setTeachers(normalized);
       })
-      .catch((error) => console.error("Failed to fetch teachers:", error));
+      .catch((error) => console.error("Error fetching teachers:", error));
   }, []);
 
   const handleToggleFavorite = (teacherId) => {
@@ -65,16 +66,23 @@ function App() {
     }));
   };
 
+
+  const handleLoadMore = () => {
+    setIsLoadingMore(true);
+    const nextPage = Math.floor(teachers.length / 15) + 1;
+    fetch(`https://randomuser.me/api/?page=${nextPage}&results=15&seed=teachinder`)
+      .then((response) => response.json())
+      .then((data) => {
+        const newTeachers = formatTeachers(data.results, []);
+        setTeachers((prev) => [...prev, ...newTeachers]);
+      })
+      .catch((error) => console.error("Error loading more teachers:", error))
+      .finally(() => {
+        setIsLoadingMore(false);
+      });
+  };
+
   let filteredTeachers = filterTeachers(teachers, filters);
-  if (searchQuery.trim()) {
-    const q = searchQuery.trim().toLowerCase();
-    filteredTeachers = filteredTeachers.filter(
-      (t) =>
-        t.full_name?.toLowerCase().includes(q) ||
-        t.note?.toLowerCase().includes(q) ||
-        String(t.age) === q
-    );
-  }
 
   return (
     <div className="page">
@@ -82,7 +90,7 @@ function App() {
       <Navbar onOpenAddTeacher={() => setIsAddModalOpen(true)} />
       <main>
         <TopTeachers onSelectTeacher={setSelectedTeacher} filters={filters}
-          onFilterChange={handleFilterChange} teachers={teachers} filteredTeachers={filteredTeachers}/>
+          onFilterChange={handleFilterChange} teachers={teachers} filteredTeachers={filteredTeachers} onLoadMore={handleLoadMore} isLoadingMore={isLoadingMore} />
         <StatisticsTable teachers={filteredTeachers} />
         <FavoritesCarousel
           teachers={teachers}
