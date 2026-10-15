@@ -1,5 +1,44 @@
-function AddTeacherModal({ isOpen, onClose }) {
+function AddTeacherModal({ isOpen, onClose, onAddTeacher }) {
   if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const bDate = formData.get("b_date") || form["f-dob"]?.value;
+    let age = null;
+    if (bDate) {
+      const birthYear = new Date(bDate).getFullYear();
+      const currentYear = new Date().getFullYear();
+      age = currentYear - birthYear;
+    }
+
+    const newTeacher = {
+      id: `teacher_${Date.now()}`,
+      full_name: form["f-name"].value,
+      course: form["f-speciality"].value,
+      country: form["f-country"].value,
+      city: form["f-city"].value || null,
+      email: form["f-email"].value,
+      phone: form["f-phone"].value,
+      b_date: bDate,
+      age: age > 0 ? age : null,
+      gender: form.sex.value === "female" ? "Female" : "Male",
+      bg_color: form.querySelector('input[type="color"]')?.value || "#ffffff",
+      note: form["f-notes"].value || null,
+      favorite: false,
+      picture_large: null,
+      picture_thumbnail: null,
+    };
+
+    if (onAddTeacher) {
+      onAddTeacher(newTeacher);
+    }
+
+    form.reset();
+    onClose();
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -11,7 +50,7 @@ function AddTeacherModal({ isOpen, onClose }) {
           </button>
         </div>
         <div className="modal-body">
-          <form id="add-teacher-form" onSubmit={(e) => { e.preventDefault(); onClose(); }}>
+          <form id="add-teacher-form" onSubmit={handleSubmit}>
             <div className="field">
               <label htmlFor="f-name">Name</label>
               <input type="text" id="f-name" placeholder="Enter name" required />
