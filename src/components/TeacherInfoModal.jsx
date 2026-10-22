@@ -1,4 +1,25 @@
+import { useEffect } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
 function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
+  useEffect(() =>{
+    let map = null;
+    if (teacher && teacher.coordinates) {
+      const { latitude, longitude } = teacher.coordinates;
+      map = L.map("map").setView([latitude, longitude], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+      L.marker([latitude, longitude]).addTo(map);
+    };
+    return () => {
+      if (map) {
+        map.remove();
+      }
+    }
+  }, [teacher]);
+
   if (!teacher) return null;
 
   const {
@@ -71,9 +92,7 @@ function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
             {description}
           </p>
 
-          <a href={mapUrl} className="toggle-map-link" target="_blank" rel="noopener noreferrer">
-            toggle map
-          </a>
+          <div id="map" style={{ height: "200px", width: "100%" }}></div>
         </div>
       </div>
     </div>
