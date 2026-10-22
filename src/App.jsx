@@ -24,13 +24,15 @@ function App() {
   });
 
   useEffect(() => {
-    fetch("https://randomuser.me/api/?page=1&results=30&seed=teachinder")
-      .then((response) => response.json())
-      .then((data) => {
-        const normalized = formatTeachers(data.results, []);
-        setTeachers(normalized);
+    Promise.all([
+      fetch("http://localhost:3001/teachers").then((res) => res.json()),
+      fetch("https://randomuser.me/api/?page=1&results=30&seed=teachinder").then((res) => res.json()),
+    ])
+      .then(([mySavedTeachers, apiData]) => {
+        const apiTeachers = formatTeachers(apiData.results, []);
+        setTeachers([...mySavedTeachers, ...apiTeachers]);
       })
-      .catch((error) => console.error("Error fetching teachers:", error));
+      .catch((error) => console.error(error));
   }, []);
 
   const handleToggleFavorite = (teacherId) => {
@@ -57,30 +59,30 @@ function App() {
 
   const handleAddTeacher = (newTeacher) => {
     if (!validateTeacher(newTeacher)) {
-    alert("Помилка валідації! Перевірте правильність заповнення форми (ім'я з великої літери, коректний телефон та вік).");
-    return false;
-  }
-fetch("http://localhost:3001/teachers", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newTeacher),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
-      }
-      return response.json();
+      alert("Помилка валідації! Перевірте правильність заповнення форми (ім'я з великої літери, коректний телефон та вік).");
+      return false;
+    }
+    fetch("http://localhost:3001/teachers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTeacher),
     })
-    .then((savedTeacher) => {
-      setTeachers((prevTeachers) => [savedTeacher, ...prevTeachers]);
-      alert("Викладача успішно додано та збережено на сервері!");
-    })
-    .catch((error) => {
-      console.error("Помилка збереження на json-server:", error);
-      setTeachers((prevTeachers) => [newTeacher, ...prevTeachers]);
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+      })
+      .then((savedTeacher) => {
+        setTeachers((prevTeachers) => [savedTeacher, ...prevTeachers]);
+        alert("Викладача успішно додано та збережено на сервері!");
+      })
+      .catch((error) => {
+        console.error("Помилка збереження на json-server:", error);
+        setTeachers((prevTeachers) => [newTeacher, ...prevTeachers]);
+      });
     return true;
   };
 
