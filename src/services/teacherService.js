@@ -1,4 +1,5 @@
 import { randomUserMock, additionalUsers } from "../data/FE4U-Lab2-mock.js";
+import _ from "lodash";
 
 const COURSES = [
   "Mathematics",
@@ -16,7 +17,7 @@ const COURSES = [
 ];
 
 function getRandomCourse() {
-  const index = Math.floor(Math.random()*COURSES.length);
+  const index = Math.floor(Math.random() * COURSES.length);
   return COURSES[index];
 }
 
@@ -29,18 +30,18 @@ function calculateAge(dateString) {
   return ageDate.getUTCFullYear() - 1970;
 }
 
-function normalizeUser(user, index){
+function normalizeUser(user, index) {
   const fullName = user.full_name || (user.name ? `${user.name.first} ${user.name.last}` : null);
   const bDate = user.b_date || user.b_day || user.dob?.date || null;
-  const age = typeof user.age === "number" ?  user.age :(user.dob?.age ?? calculateAge(bDate));
+  const age = typeof user.age === "number" ? user.age : (user.dob?.age ?? calculateAge(bDate));
   const course = user.course || getRandomCourse();
-  const id = user.id?.value || (typeof user.id==="string" ? user.id : user.login?.uuid || `user_${index + 1}`);
+  const id = user.id?.value || (typeof user.id === "string" ? user.id : user.login?.uuid || `user_${index + 1}`);
 
-  return{
+  return {
     id,
     gender: user.gender ? user.gender[0].toUpperCase() + user.gender.slice(1) : null,
     title: user.title || user.name?.title || null,
-    full_name:fullName,
+    full_name: fullName,
     city: user.city || user.location?.city || null,
     state: user.state || user.location?.state || null,
     country: user.country || user.location?.country || null,
@@ -61,14 +62,14 @@ function normalizeUser(user, index){
 }
 
 export function formatTeachers(primUsers = randomUserMock, secUsers = additionalUsers) {
-  const map  = new Map();
+  const map = new Map();
   const allUsers = [...secUsers, ...primUsers];
 
   allUsers.forEach((user, index) => {
-    const normalized = normalizeUser(user,index);
+    const normalized = normalizeUser(user, index);
     const key = normalized.full_name ? normalized.full_name.toLowerCase() : normalized.id;
 
-    if(!map.has(key)){
+    if (!map.has(key)) {
       map.set(key, normalized);
     } else {
       const existing = map.get(key);
@@ -117,136 +118,92 @@ const phoneFormats = {
 };
 
 function isCapitalized(value) {
-  if (typeof value !== "string" || value.length === 0) return false;
+  if (!_.isString(value) || _.isEmpty(value)) return false;
   return /^[\p{Lu}\p{Lo}]/u.test(value);
 }
 
 export function validateTeacher(teacher) {
-  if (!teacher || typeof teacher !== "object") return false;
+  if (!_.isObject(teacher)) return false;
 
   const stringFields = ["full_name", "gender", "state", "city", "country"];
-  for (const field of stringFields) {
-    if (!isCapitalized(teacher[field])) {
-      return false;
-    }
-  }
+  const allStringsValid = _.every(stringFields, (field) => isCapitalized(teacher[field]));
+  
+  if (!allStringsValid) return false;
 
-  if (teacher.note !== null && teacher.note !== undefined) {
-    if (!isCapitalized(teacher.note)) {
-      return false;
-    }
+  if (!_.isNil(teacher.note) && !isCapitalized(teacher.note)) {
+    return false;
   }
-
-  if (typeof teacher.age !== "number" || isNaN(teacher.age) || teacher.age <= 0) {
+  if (!_.isNumber(teacher.age) || _.isNaN(teacher.age) || teacher.age <= 0) {
+    return false;
+  }
+  if (!_.isString(teacher.email) || !_.includes(teacher.email, "@")) {
     return false;
   }
 
-  if (typeof teacher.email !== "string" || !teacher.email.includes("@")) {
+  if (!_.isString(teacher.phone)) {
     return false;
   }
-
-  if (typeof teacher.phone !== "string") {
-    return false;
-  }
-
   const format = phoneFormats[teacher.country];
   if (format && !format.test(teacher.phone)) {
     return false;
   }
-
   return true;
 }
 
 export function filterTeachers(teachers, filters = {}) {
-  if (!Array.isArray(teachers)) return [];
-
-  return teachers.filter((teacher) => {
-    if (filters.country && filters.country !== "All" && teacher.country?.toLowerCase() !== filters.country.toLowerCase()) {
+  if (!_.isArray(teachers)) return [];
+  return _.filter(teachers, (teacher) => {
+    if (filters.country && filters.country !== "All" && _.toLower(teacher.country) !== _.toLower(filters.country)) {
       return false;
     }
-
-   if (filters.gender && filters.gender !== "All" && teacher.gender?.toLowerCase() !== filters.gender.toLowerCase()) {
+    if (filters.gender && filters.gender !== "All" && _.toLower(teacher.gender) !== _.toLower(filters.gender)) {
       return false;
     }
-
-    if (filters.age !== undefined && filters.age !== null && filters.age !== "All") {
-      if (typeof filters.age === "number") {
+    if (!_.isNil(filters.age) && filters.age !== "All") {
+      if (_.isNumber(filters.age)) {
         if (teacher.age !== filters.age) return false;
       } else if (filters.age === "18-31") {
-        if (teacher.age < 18 || teacher.age > 31) return false;
+        if (!_.inRange(teacher.age, 18, 32)) return false;
       } else if (filters.age === "32-45") {
-        if (teacher.age < 32 || teacher.age > 45) return false;
+        if (!_.inRange(teacher.age, 32, 46)) return false;
       } else if (filters.age === "46+") {
         if (teacher.age < 46) return false;
       }
     }
-
     if (filters.favorite && !teacher.favorite) {
       return false;
     }
-
     if (filters.hasPhoto && !teacher.picture_large) {
       return false;
     }
-
     return true;
   });
 }
 
 export function sortTeachers(teachers, sortBy = "full_name", order = "asc") {
-  if (!Array.isArray(teachers)) return [];
-
-  const copy = [...teachers];
-
-  return copy.sort((a, b) => {
-   let valA = a[sortBy];
-   let valB = b[sortBy];
-
-   if (sortBy === "b_date") {
-      valA = new Date(a.b_date || 0).getTime();
-      valB = new Date(b.b_date || 0).getTime();
-    }
-
-   if(!valA) return 1;
-   if(!valB) return -1;
-
-   let res = 0;
-
-   if (typeof valA === "number" && typeof valB === "number") {
-      res = valA - valB;
-    } else {
-      res = String(valA).localeCompare(String(valB));
-    }
-
-    return order ==="desc" ? -res : res;
-  });
+  return _.orderBy(teachers, [sortBy], [order]);
 }
 
 export function findTeacher(teachers, query) {
-  if (!teachers || !query || teachers.length === 0) {
-    return null;
-  }
-
-  const q = String(query).toLowerCase();
-
-  return teachers.find((teacher) => 
-    teacher.full_name?.toLowerCase().includes(q) ||
-    teacher.note?.toLowerCase().includes(q) ||
-    teacher.age == q
-  ) || null;
+const q = String(query).toLowerCase();
+  return _.find(teachers, (teacher) =>
+    _.includes(_.toLower(teacher.full_name), q) ||
+    _.includes(_.toLower(teacher.note), q) ||
+    teacher.age == query
+  );
 }
 
 export function getTeacherPercentage(teachers, condition) {
   if (!teachers || teachers.length === 0 || !condition) return 0;
 
   const matched = teachers.filter((teacher) => {
-    if (typeof condition === "function") {
+    if (_.isFunction(condition)) {
       return condition(teacher);
     }
     const q = String(condition).toLowerCase();
     return (
-      teacher.full_name?.toLowerCase()?.includes(q) ||
-      teacher.note?.toLowerCase()?.includes(q) ||
+      _.includes(_.toLower(teacher.full_name), q) ||
+      _.includes(_.toLower(teacher.note), q) ||
       teacher.age == condition
     );
   });
