@@ -20,6 +20,7 @@ function AddTeacherModal({ isOpen, onClose, onAddTeacher }) {
       course: form["f-speciality"].value,
       country: form["f-country"].value,
       city: form["f-city"].value || null,
+      state: form["f-city"].value || form["f-country"].value || "Region",
       email: form["f-email"].value,
       phone: form["f-phone"].value,
       b_date: bDate,
@@ -33,7 +34,10 @@ function AddTeacherModal({ isOpen, onClose, onAddTeacher }) {
     };
 
     if (onAddTeacher) {
-      onAddTeacher(newTeacher);
+      const isSuccess = onAddTeacher(newTeacher);
+  if (!isSuccess) {
+    return;
+  }
     }
 
     form.reset();

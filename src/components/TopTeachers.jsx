@@ -1,26 +1,34 @@
 import Filters from "./Filters";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TeacherCard from "./TeacherCard";
-import { filterTeachers } from "../services/teacherService.js";
 
-function TopTeachers({ onSelectTeacher, teachers = [] }) {
+function TopTeachers({ onSelectTeacher, filters, onFilterChange, teachers = [], filteredTeachers, onLoadMore,
+    isLoadingMore, }) {
 
-    const [filters, setFilters] = useState({
-        age: "All",
-        country: "All",
-        gender: "All",
-        hasPhoto: false,
-        favorite: false,
-    });
+    const [currentPage, setCurrentPage] = useState(1);
+    const CARDS_PER_PAGE = 15;
 
-    const handleFilterChange = (field, value) => {
-        setFilters((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
+    const totalPages = Math.ceil(filteredTeachers.length / CARDS_PER_PAGE) || 1;
+    const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
+    const currentCards = filteredTeachers.slice(startIndex, startIndex + CARDS_PER_PAGE);
+
+const handleNext = async () => {
+    const nextStartIndex = currentPage * CARDS_PER_PAGE;
+    
+    if (filteredTeachers.length < nextStartIndex + CARDS_PER_PAGE) {
+        const success = await onLoadMore();
+        if (success) {
+            setCurrentPage((prev) => prev + 1);
+        }
+    } else {
+        setCurrentPage((prev) => prev + 1);
+    }
+};
+    const handlePrev = () => {
+        if (currentPage > 1) {
+            setCurrentPage((prev) => prev - 1);
+        }
     };
-
-    const filteredTeachers = filterTeachers(teachers, filters);
 
     const handleGridClick = (e) => {
         const card = e.target.closest(".teacher-card");
@@ -32,6 +40,10 @@ function TopTeachers({ onSelectTeacher, teachers = [] }) {
         }
     };
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters]);
+
     return (
         <section id="teachers">
             <hr className="divider"></hr>
@@ -39,17 +51,36 @@ function TopTeachers({ onSelectTeacher, teachers = [] }) {
             <Filters
                 teachers={teachers}
                 filters={filters}
-                onFilterChange={handleFilterChange}
+                onFilterChange={onFilterChange}
             />
             <div className="teacher-grid" onClick={handleGridClick}>
                 {
-                    filteredTeachers.slice(0, 15).map(teacher => (
+                    currentCards.map(teacher => (
                         <TeacherCard
                             key={teacher.id}
                             teacher={teacher}
                         />
                     ))
                 }
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "15px", margin: "25px 0" }}>
+                <button
+                    type="button"
+                    className="red-button"
+                    onClick={handlePrev}
+                    disabled={currentPage === 1}
+                >
+                    Назад
+                </button>
+                <span>Сторінка {currentPage}</span>
+                <button
+                    type="button"
+                    className="red-button"
+                    onClick={handleNext}
+                    disabled={isLoadingMore}
+                >
+                    {isLoadingMore ? "Loading..." : "Далі"}
+                </button>
             </div>
             <hr className="divider" />
         </section>
