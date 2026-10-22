@@ -22,11 +22,12 @@ function App() {
     hasPhoto: false,
     favorite: false,
   });
+  const [apiPage, setApiPage] = useState(2);
 
   useEffect(() => {
     Promise.all([
       fetch("http://localhost:3001/teachers").then((res) => res.json()),
-      fetch("https://randomuser.me/api/?page=1&results=30&seed=teachinder").then((res) => res.json()),
+      fetch(`https://randomuser.me/api/?page=${apiPage}&results=15&seed=teachinder`).then((res) => res.json()),
     ])
       .then(([mySavedTeachers, apiData]) => {
         const apiTeachers = formatTeachers(apiData.results, []);
@@ -94,20 +95,22 @@ function App() {
   };
 
 
-  const handleLoadMore = () => {
-    setIsLoadingMore(true);
-    const nextPage = Math.floor(teachers.length / 15) + 1;
-    fetch(`https://randomuser.me/api/?page=${nextPage}&results=15&seed=teachinder`)
-      .then((response) => response.json())
-      .then((data) => {
-        const newTeachers = formatTeachers(data.results, []);
-        setTeachers((prev) => [...prev, ...newTeachers]);
-      })
-      .catch((error) => console.error("Error loading more teachers:", error))
-      .finally(() => {
-        setIsLoadingMore(false);
-      });
-  };
+const handleLoadMore = async () => {
+  setIsLoadingMore(true);
+  try {
+    const response = await fetch(`https://randomuser.me/api/?page=${apiPage}&results=15&seed=teachinder`);
+    const data = await response.json();
+    const newTeachers = formatTeachers(data.results, []);
+    setTeachers((prev) => [...prev, ...newTeachers]);
+    setApiPage((prev) => prev + 1);
+    return true;
+  } catch (error) {
+    console.error("Error loading more teachers:", error);
+    return false;
+  } finally {
+    setIsLoadingMore(false);
+  }
+};
 
   let filteredTeachers = filterTeachers(teachers, filters);
 

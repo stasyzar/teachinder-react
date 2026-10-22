@@ -12,12 +12,18 @@ function TopTeachers({ onSelectTeacher, filters, onFilterChange, teachers = [], 
     const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
     const currentCards = filteredTeachers.slice(startIndex, startIndex + CARDS_PER_PAGE);
 
-    const handleNext = () => {
-        if (currentPage >= totalPages) {
-            onLoadMore();
+const handleNext = async () => {
+    const nextStartIndex = currentPage * CARDS_PER_PAGE;
+    
+    if (filteredTeachers.length < nextStartIndex + CARDS_PER_PAGE) {
+        const success = await onLoadMore();
+        if (success) {
+            setCurrentPage((prev) => prev + 1);
         }
+    } else {
         setCurrentPage((prev) => prev + 1);
-    };
+    }
+};
     const handlePrev = () => {
         if (currentPage > 1) {
             setCurrentPage((prev) => prev - 1);
