@@ -1,9 +1,20 @@
 import { useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import dayjs from "dayjs";
+
+function getDaysUntilBirthday(bDate) {
+  if (!bDate) return null;
+  const today = dayjs().startOf("day");
+  let nextBirthday = dayjs(bDate).year(today.year()).startOf("day");
+  if (nextBirthday.isBefore(today)) {
+    nextBirthday = nextBirthday.add(1, "year");
+  }
+  return nextBirthday.diff(today, "day");
+}
 
 function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
-  useEffect(() =>{
+  useEffect(() => {
     let map = null;
     if (teacher && teacher.coordinates) {
       const { latitude, longitude } = teacher.coordinates;
@@ -36,7 +47,7 @@ function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
     gender,
     age,
     note,
-    coordinates,
+    b_date
   } = teacher;
 
   const nameParts = full_name ? full_name.split(" ") : ["", ""];
@@ -45,11 +56,7 @@ function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
   const initials = firstName && lastName ? `${firstName[0]}.${lastName[0]}` : "";
   const avatar = picture_large || picture_thumbnail;
   const description = note || "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab autem consectetur culpa cumque, distinctio dolor dolore dolorem doloremque ea explicabo facilis nam nesciunt nisi pariatur perspiciatis porro quis similique temporibus veniam veritatis? A ab ad, aliquam amet consequatur cupiditate debitis deserunt doloribus dolorum earum eius eos minus nostrum odit omnis perferendis...";
-  const lat = coordinates?.latitude;
-  const lng = coordinates?.longitude;
-  const mapUrl = (lat && lng)
-    ? `https://www.google.com/maps?q=${lat},${lng}`
-    : `https://www.google.com/maps?q=${encodeURIComponent(`${city || ""}, ${country}`)}`;
+  const daysToBirthday = getDaysUntilBirthday(b_date);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -85,6 +92,13 @@ function TeacherInfoModal({ teacher, onClose, onToggleFavorite }) {
                 <a href={`mailto:${email}`}>{email}</a>
               </p>
               <p className="info-phone">{phone}</p>
+              {daysToBirthday !== null && (
+                <p className="info-birthday" style={{ color: "#f05a5b", fontSize: "14px", fontWeight: "bold" }}>
+                  🎂 {daysToBirthday === 0
+                    ? "Сьогодні день народження! 🎉"
+                    : `До дня народження залишилось: ${daysToBirthday} дн.`}
+                </p>
+              )}
             </div>
           </div>
 
