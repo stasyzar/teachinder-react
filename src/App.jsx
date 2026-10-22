@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import AddTeacherModal from "./components/AddTeacherModal";
 import TeacherInfoModal from "./components/TeacherInfoModal";
 import { validateTeacher, formatTeachers, findTeacher, filterTeachers } from "./services/teacherService.js";
+import TeacherReport from "./components/TeacherReport";
 
 function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -122,6 +123,7 @@ const handleLoadMore = async () => {
         <TopTeachers onSelectTeacher={setSelectedTeacher} filters={filters}
           onFilterChange={handleFilterChange} teachers={teachers} filteredTeachers={filteredTeachers} onLoadMore={handleLoadMore} isLoadingMore={isLoadingMore} />
         <StatisticsPiechart teachers={filteredTeachers} />
+        <TeacherReport teachers={filteredTeachers} />
         <FavoritesCarousel
           teachers={teachers}
           onSelectTeacher={setSelectedTeacher}
