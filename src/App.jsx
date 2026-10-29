@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
 import TopTeachers from "./components/TopTeachers";
-import StatisticsTable from "./components/StatisticsTable";
+import StatisticsPiechart from "./components/StatisticsPiechart";
 import FavoritesCarousel from "./components/FavoritesCarousel";
 import About from "./components/About";
 import Footer from "./components/Footer";
 import AddTeacherModal from "./components/AddTeacherModal";
 import TeacherInfoModal from "./components/TeacherInfoModal";
 import { validateTeacher, formatTeachers, findTeacher, filterTeachers } from "./services/teacherService.js";
+import TeacherReport from "./components/TeacherReport";
 
 function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -27,7 +28,7 @@ function App() {
   useEffect(() => {
     Promise.all([
       fetch("http://localhost:3001/teachers").then((res) => res.json()),
-      fetch(`https://randomuser.me/api/?page=${apiPage}&results=15&seed=teachinder`).then((res) => res.json()),
+      fetch(`https://randomuser.me/api/?page=1&results=15&seed=teachinder`).then((res) => res.json()),
     ])
       .then(([mySavedTeachers, apiData]) => {
         const apiTeachers = formatTeachers(apiData.results, []);
@@ -121,7 +122,8 @@ const handleLoadMore = async () => {
       <main>
         <TopTeachers onSelectTeacher={setSelectedTeacher} filters={filters}
           onFilterChange={handleFilterChange} teachers={teachers} filteredTeachers={filteredTeachers} onLoadMore={handleLoadMore} isLoadingMore={isLoadingMore} />
-        <StatisticsTable teachers={filteredTeachers} />
+        <StatisticsPiechart teachers={filteredTeachers} />
+        <TeacherReport teachers={filteredTeachers} />
         <FavoritesCarousel
           teachers={teachers}
           onSelectTeacher={setSelectedTeacher}
